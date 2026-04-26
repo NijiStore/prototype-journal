@@ -92,7 +92,7 @@ function openModal(id = null) {
 	document.getElementById('f-name').value                  = p.name        || '';
 	document.getElementById('f-category').value              = p.category     || '';
 	document.getElementById('f-date').value                  = p.date         || '';
-	document.getElementById('f-iteration').value             = p.iteration    || '';
+	document.getElementById('f-model').value             = p.model    || '';
 	document.getElementById('f-time').value                  = p.time         || '';
 	document.getElementById('f-difficulty').value            = p.difficulty   || '';
 	document.getElementById('f-cost').value                  = p.cost         || '';
@@ -223,7 +223,7 @@ async function saveProto(e) {
 	name:        document.getElementById('f-name').value,
 	category:    document.getElementById('f-category').value,
 	date:        document.getElementById('f-date').value,
-	iteration:   document.getElementById('f-iteration').value,
+	model:   document.getElementById('f-model').value,
 	time:        document.getElementById('f-time').value,
 	difficulty:  document.getElementById('f-difficulty').value,
 	cost:        document.getElementById('f-cost').value,
@@ -356,7 +356,7 @@ function renderJournal(filtered) {
 		  <div class="page-num">P${pageNum.toString().padStart(3, '0')}</div>
 		  <div class="page-title-block">
 			<div class="page-name">${p.name || 'Unnamed prototype'}</div>
-			<div class="page-category">${p.category || ''}${p.iteration ? ' · ' + p.iteration : ''}${p.date ? ' · ' + fmtDate(p.date) : ''}</div>
+			<div class="page-category">${p.category || ''}${p.model ? ' · ' + p.model : ''}${p.date ? ' · ' + fmtDate(p.date) : ''}</div>
 		  </div>
 		  <div class="page-time-block">
 			<div class="page-time-num">${p.time || '—'}</div>
@@ -408,7 +408,7 @@ function renderGrid(filtered) {
 	  <div class="grid-card ${vClass}" onclick="openModal('${p.id}')">
 		<div class="gc-num">P${pageNum.toString().padStart(3, '0')}</div>
 		<div class="gc-name">${p.name || 'Unnamed'}</div>
-		<div class="gc-cat">${p.category || '—'}${p.iteration ? ' · ' + p.iteration : ''}</div>
+		<div class="gc-cat">${p.category || '—'}${p.model ? ' · ' + p.model : ''}</div>
 		${primary ? `<div style="font-family:'Space Mono',monospace;font-size:8px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-top:4px;">${primary.label}</div>` : ''}
 		<div class="gc-meta">
 		  <span class="gc-time">${p.time ? p.time + 'h' : '—'}</span>
