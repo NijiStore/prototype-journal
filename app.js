@@ -317,7 +317,7 @@ function buildPricingHTML(p) {
   return `
 	<div class="pricing-block" style="margin-top:0;">
 	  ${p.cost  ? `<div class="pricing-row"><span class="plabel">Material Cost</span><span class="pval">${p.cost}</span></div>` : ''}
-	  ${p.time  ? `<div class="pricing-row"><span class="plabel">Time</span><span class="pval">${p.time}h</span></div>` : ''}
+	  ${p.time  ? `<div class="pricing-row"><span class="plabel">Time</span><span class="pval">${p.time}</span></div>` : ''}
 	  ${p.price ? `<div class="pricing-row total"><span class="plabel">Suggested Retail</span><span class="pval">${p.price}</span></div>` : ''}
 	</div>`;
 }
@@ -360,7 +360,6 @@ function renderJournal(filtered) {
 		  </div>
 		  <div class="page-time-block">
 			<div class="page-time-num">${p.time || '—'}</div>
-			<div class="page-time-label">hours</div>
 		  </div>
 		  <span class="verdict-badge ${vbClass}">${vLabel}</span>
 		</div>
@@ -411,7 +410,7 @@ function renderGrid(filtered) {
 		<div class="gc-cat">${p.category || '—'}${p.model ? ' · ' + p.model : ''}</div>
 		${primary ? `<div style="font-family:'Space Mono',monospace;font-size:8px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-top:4px;">${primary.label}</div>` : ''}
 		<div class="gc-meta">
-		  <span class="gc-time">${p.time ? p.time + 'h' : '—'}</span>
+		  <span class="gc-time">${p.time ? p.time : '—'}</span>
 		  <span class="gc-badge ${vbClass}">${vLabel}</span>
 		</div>
 	  </div>`;
