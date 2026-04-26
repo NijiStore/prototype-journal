@@ -103,6 +103,9 @@ body::before {
   padding: 10px 20px; border: .5px solid;
   background: transparent; cursor: pointer; transition: all .2s;
 }
+.btn:active {
+  transform: scale(0.96);
+}
 .btn-primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .btn-primary:hover { background: var(--accent); border-color: var(--accent); }
 .btn-outline { color: var(--muted); border-color: var(--mid); }
@@ -140,8 +143,14 @@ body::before {
   border-left: 3px solid var(--mid);
   position: relative; overflow: hidden;
   cursor: pointer; transition: border-color .2s;
+  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
 }
-.proto-page:hover { filter: brightness(1.02); }
+
+.proto-page:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  filter: brightness(1.02);
+}
 .proto-page.verdict-cut   { border-left-color: var(--moss); }
 .proto-page.verdict-maybe { border-left-color: var(--gold); }
 .proto-page.verdict-no    { border-left-color: var(--rust); opacity: .75; }
@@ -183,11 +192,22 @@ body::before {
 
 /* Page body — expands on click */
 .page-body {
-  display: none;
-  padding: 0 24px 28px 80px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  padding: 0 24px 0 80px;
   border-top: .5px solid rgba(201,185,154,.3);
+  transition: max-height .4s ease, opacity .25s ease, padding .3s ease;
 }
-.page-body.open { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+
+.page-body.open {
+  max-height: 1000px;
+  opacity: 1;
+  padding: 16px 24px 28px 80px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
 
 .body-label {
   font-family: 'Space Mono', monospace;
@@ -262,8 +282,14 @@ body::before {
   border-top: 3px solid var(--mid);
   padding: 24px 20px;
   cursor: pointer; transition: all .18s; position: relative;
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
 }
-.grid-card:hover { background: var(--paper-dd); }
+
+.grid-card:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.08);
+  background: var(--paper-dd);
+}
 .grid-card.verdict-cut   { border-top-color: var(--moss); }
 .grid-card.verdict-maybe { border-top-color: var(--gold); }
 .grid-card.verdict-no    { border-top-color: var(--rust); opacity: .75; }
@@ -300,8 +326,14 @@ body::before {
   animation: modalIn .3s ease both;
 }
 @keyframes modalIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .modal-header {

@@ -1,5 +1,6 @@
 // ── CONFIG ──
-const API = 'https://niji-proto-app-backend.onrender.com/api/prototypes';
+const API_BASE = 'https://niji-proto-app-backend.onrender.com';
+const API = `${API_BASE}/api/prototypes`;
 
 // ── STATE ──
 let protos       = [];
@@ -22,23 +23,24 @@ const VERDICT_CLASSES = { cut: 'vb-cut', maybe: 'vb-maybe', no: 'vb-no', wip: 'v
 
 async function apiGetAll() {
   const res = await fetch(API);
+  if (!res.ok) throw new Error('Failed to fetch');
   return res.json();
 }
 
 async function apiCreate(proto) {
   const res = await fetch(API, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(proto),
+	method: 'POST',
+	headers: { 'Content-Type': 'application/json' },
+	body: JSON.stringify(proto),
   });
   return res.json();
 }
 
 async function apiUpdate(id, proto) {
   const res = await fetch(`${API}/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(proto),
+	method: 'PATCH',
+	headers: { 'Content-Type': 'application/json' },
+	body: JSON.stringify(proto),
   });
   return res.json();
 }
@@ -52,7 +54,12 @@ async function apiDelete(id) {
 // =============================================================================
 
 async function loadAll() {
-  protos = await apiGetAll();
+  try {
+	protos = await apiGetAll();
+  } catch (e) {
+	console.error(e);
+	protos = [];
+  }
   render();
 }
 
@@ -78,27 +85,27 @@ function openModal(id = null) {
   document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
 
   if (id) {
-    // Edit mode — populate fields from existing prototype
-    const p = protos.find(x => x.id === id);
-    document.getElementById('modal-title').textContent       = 'Edit Prototype';
-    document.getElementById('edit-id').value                 = id;
-    document.getElementById('f-name').value                  = p.name        || '';
-    document.getElementById('f-category').value              = p.category     || '';
-    document.getElementById('f-date').value                  = p.date         || '';
-    document.getElementById('f-iteration').value             = p.iteration    || '';
-    document.getElementById('f-time').value                  = p.time         || '';
-    document.getElementById('f-difficulty').value            = p.difficulty   || '';
-    document.getElementById('f-cost').value                  = p.cost         || '';
-    document.getElementById('f-verdict').value               = p.verdict      || 'wip';
-    document.getElementById('f-price').value                 = p.price        || '';
-    document.getElementById('f-verdict-note').value          = p.verdictNote  || '';
-    tempMaterials = p.materials ? [...p.materials] : [];
-    tempWorked    = p.worked    ? [...p.worked]    : [];
-    tempDidnt     = p.didnt     ? [...p.didnt]     : [];
+	// Edit mode — populate fields from existing prototype
+	const p = protos.find(x => x.id === id);
+	document.getElementById('modal-title').textContent       = 'Edit Prototype';
+	document.getElementById('edit-id').value                 = id;
+	document.getElementById('f-name').value                  = p.name        || '';
+	document.getElementById('f-category').value              = p.category     || '';
+	document.getElementById('f-date').value                  = p.date         || '';
+	document.getElementById('f-iteration').value             = p.iteration    || '';
+	document.getElementById('f-time').value                  = p.time         || '';
+	document.getElementById('f-difficulty').value            = p.difficulty   || '';
+	document.getElementById('f-cost').value                  = p.cost         || '';
+	document.getElementById('f-verdict').value               = p.verdict      || 'wip';
+	document.getElementById('f-price').value                 = p.price        || '';
+	document.getElementById('f-verdict-note').value          = p.verdictNote  || '';
+	tempMaterials = p.materials ? [...p.materials] : [];
+	tempWorked    = p.worked    ? [...p.worked]    : [];
+	tempDidnt     = p.didnt     ? [...p.didnt]     : [];
   } else {
-    // Create mode
-    document.getElementById('modal-title').textContent = 'New Prototype';
-    document.getElementById('edit-id').value           = '';
+	// Create mode
+	document.getElementById('modal-title').textContent = 'New Prototype';
+	document.getElementById('edit-id').value           = '';
   }
 
   renderMatChips();
@@ -145,12 +152,12 @@ function removeMaterial(i) {
 
 function renderMatChips() {
   document.getElementById('mat-chips').innerHTML = tempMaterials
-    .map((m, i) => `
-      <div class="mat-chip ${m.primary ? 'primary-chip' : ''}">
-        ${m.label}
-        <button type="button" onclick="removeMaterial(${i})">✕</button>
-      </div>`)
-    .join('');
+	.map((m, i) => `
+	  <div class="mat-chip ${m.primary ? 'primary-chip' : ''}">
+		${m.label}
+		<button type="button" onclick="removeMaterial(${i})">✕</button>
+	  </div>`)
+	.join('');
 }
 
 // =============================================================================
@@ -172,8 +179,8 @@ function removeWorked(i) {
 
 function renderWorkedList() {
   document.getElementById('worked-list').innerHTML = tempWorked
-    .map((w, i) => `<li>${w}<button type="button" onclick="removeWorked(${i})">✕</button></li>`)
-    .join('');
+	.map((w, i) => `<li>${w}<button type="button" onclick="removeWorked(${i})">✕</button></li>`)
+	.join('');
 }
 
 function addDidnt() {
@@ -191,8 +198,8 @@ function removeDidnt(i) {
 
 function renderDidntList() {
   document.getElementById('didnt-list').innerHTML = tempDidnt
-    .map((d, i) => `<li>${d}<button type="button" onclick="removeDidnt(${i})">✕</button></li>`)
-    .join('');
+	.map((d, i) => `<li>${d}<button type="button" onclick="removeDidnt(${i})">✕</button></li>`)
+	.join('');
 }
 
 // Enter key shortcuts inside list inputs
@@ -212,31 +219,33 @@ async function saveProto(e) {
 
   const id = editingId || genId();
   const proto = {
-    id,
-    name:        document.getElementById('f-name').value,
-    category:    document.getElementById('f-category').value,
-    date:        document.getElementById('f-date').value,
-    iteration:   document.getElementById('f-iteration').value,
-    time:        document.getElementById('f-time').value,
-    difficulty:  document.getElementById('f-difficulty').value,
-    cost:        document.getElementById('f-cost').value,
-    verdict:     document.getElementById('f-verdict').value,
-    price:       document.getElementById('f-price').value,
-    verdictNote: document.getElementById('f-verdict-note').value,
-    materials:   [...tempMaterials],
-    worked:      [...tempWorked],
-    didnt:       [...tempDidnt],
-    createdAt:   editingId
-      ? (protos.find(x => x.id === editingId)?.createdAt || Date.now())
-      : Date.now(),
+	id,
+	name:        document.getElementById('f-name').value,
+	category:    document.getElementById('f-category').value,
+	date:        document.getElementById('f-date').value,
+	iteration:   document.getElementById('f-iteration').value,
+	time:        document.getElementById('f-time').value,
+	difficulty:  document.getElementById('f-difficulty').value,
+	cost:        document.getElementById('f-cost').value,
+	verdict:     document.getElementById('f-verdict').value,
+	price:       document.getElementById('f-price').value,
+	verdictNote: document.getElementById('f-verdict-note').value,
+	materials:   [...tempMaterials],
+	worked:      [...tempWorked],
+	didnt:       [...tempDidnt],
+	createdAt:   editingId
+	  ? (protos.find(x => x.id === editingId)?.createdAt || Date.now())
+	  : Date.now(),
   };
 
   if (editingId) {
-    const updated = await apiUpdate(editingId, proto);
-    protos = protos.map(x => x.id === editingId ? updated : x);
+	protos = protos.map(x => x.id === editingId ? proto : x);
+	render();
+	await apiUpdate(editingId, proto);
   } else {
-    const created = await apiCreate(proto);
-    protos.push(created);
+	protos.push(proto);
+	render();
+	await apiCreate(proto);
   }
 
   closeModal();
@@ -280,7 +289,16 @@ function setView(v, btn) {
 
 function togglePage(id) {
   const body = document.getElementById('body-' + id);
-  if (body) body.classList.toggle('open');
+  if (!body) return;
+
+  const isOpening = !body.classList.contains('open');
+  body.classList.toggle('open');
+
+  if (isOpening) {
+    setTimeout(() => {
+      body.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 200);
+  }
 }
 
 // =============================================================================
@@ -297,20 +315,20 @@ function fmtDate(d) {
 function buildPricingHTML(p) {
   if (!p.time && !p.cost && !p.price) return '';
   return `
-    <div class="pricing-block" style="margin-top:0;">
-      ${p.cost  ? `<div class="pricing-row"><span class="plabel">Material Cost</span><span class="pval">${p.cost}</span></div>` : ''}
-      ${p.time  ? `<div class="pricing-row"><span class="plabel">Time</span><span class="pval">${p.time}h</span></div>` : ''}
-      ${p.price ? `<div class="pricing-row total"><span class="plabel">Suggested Retail</span><span class="pval">${p.price}</span></div>` : ''}
-    </div>`;
+	<div class="pricing-block" style="margin-top:0;">
+	  ${p.cost  ? `<div class="pricing-row"><span class="plabel">Material Cost</span><span class="pval">${p.cost}</span></div>` : ''}
+	  ${p.time  ? `<div class="pricing-row"><span class="plabel">Time</span><span class="pval">${p.time}h</span></div>` : ''}
+	  ${p.price ? `<div class="pricing-row total"><span class="plabel">Suggested Retail</span><span class="pval">${p.price}</span></div>` : ''}
+	</div>`;
 }
 
 function buildEmptyState() {
   return `
-    <div class="empty-state">
-      <div class="empty-icon">◎</div>
-      <div class="empty-title">${protos.length === 0 ? 'No prototypes yet' : 'Nothing matches this filter'}</div>
-      <div class="empty-sub">${protos.length === 0 ? 'Press + New Prototype to begin the journal' : 'Try a different filter above'}</div>
-    </div>`;
+	<div class="empty-state">
+	  <div class="empty-icon">◎</div>
+	  <div class="empty-title">${protos.length === 0 ? 'No prototypes yet' : 'Nothing matches this filter'}</div>
+	  <div class="empty-sub">${protos.length === 0 ? 'Press + New Prototype to begin the journal' : 'Try a different filter above'}</div>
+	</div>`;
 }
 
 // =============================================================================
@@ -322,51 +340,51 @@ function renderJournal(filtered) {
 
   if (filtered.length === 0) { wrap.innerHTML = buildEmptyState(); return; }
 
-  wrap.innerHTML = filtered.map(p => {
-    const vClass  = 'verdict-' + (p.verdict || 'wip');
-    const vbClass = VERDICT_CLASSES[p.verdict] || 'vb-wip';
-    const vLabel  = VERDICT_LABELS[p.verdict]  || 'In Progress';
-    const pageNum = protos.findIndex(x => x.id === p.id) + 1;
+  wrap.innerHTML = filtered.map((p, i) => {
+	const vClass  = 'verdict-' + (p.verdict || 'wip');
+	const vbClass = VERDICT_CLASSES[p.verdict] || 'vb-wip';
+	const vLabel  = VERDICT_LABELS[p.verdict]  || 'In Progress';
+	const pageNum = protos.findIndex(x => x.id === p.id) + 1;
 
-    const matHTML    = (p.materials || []).map(m => `<span class="mat-tag ${m.primary ? 'primary' : ''}">${m.label}</span>`).join('');
-    const workedHTML = (p.worked || []).map(w => `<li>${w}</li>`).join('');
-    const didntHTML  = (p.didnt  || []).map(d => `<li>${d}</li>`).join('');
+	const matHTML    = (p.materials || []).map(m => `<span class="mat-tag ${m.primary ? 'primary' : ''}">${m.label}</span>`).join('');
+	const workedHTML = (p.worked || []).map(w => `<li>${w}</li>`).join('');
+	const didntHTML  = (p.didnt  || []).map(d => `<li>${d}</li>`).join('');
 
-    return `
-      <div class="proto-page ${vClass}" id="page-${p.id}">
-        <div class="page-header" onclick="togglePage('${p.id}')">
-          <div class="page-num">P${pageNum.toString().padStart(3, '0')}</div>
-          <div class="page-title-block">
-            <div class="page-name">${p.name || 'Unnamed prototype'}</div>
-            <div class="page-category">${p.category || ''}${p.iteration ? ' · ' + p.iteration : ''}${p.date ? ' · ' + fmtDate(p.date) : ''}</div>
-          </div>
-          <div class="page-time-block">
-            <div class="page-time-num">${p.time || '—'}</div>
-            <div class="page-time-label">hours</div>
-          </div>
-          <span class="verdict-badge ${vbClass}">${vLabel}</span>
-        </div>
+	return `
+	  <div class="proto-page style="animation: fadeUp .4s ease both; animation-delay:${i * 0.05}s;" ${vClass}" id="page-${p.id}">
+		<div class="page-header" onclick="togglePage('${p.id}')">
+		  <div class="page-num">P${pageNum.toString().padStart(3, '0')}</div>
+		  <div class="page-title-block">
+			<div class="page-name">${p.name || 'Unnamed prototype'}</div>
+			<div class="page-category">${p.category || ''}${p.iteration ? ' · ' + p.iteration : ''}${p.date ? ' · ' + fmtDate(p.date) : ''}</div>
+		  </div>
+		  <div class="page-time-block">
+			<div class="page-time-num">${p.time || '—'}</div>
+			<div class="page-time-label">hours</div>
+		  </div>
+		  <span class="verdict-badge ${vbClass}">${vLabel}</span>
+		</div>
 
-        <div class="page-body" id="body-${p.id}">
-          <div class="body-section">
-            <div class="body-label">Materials Used</div>
-            <div class="material-tags">${matHTML || '<span style="color:var(--muted);font-size:13px;font-style:italic;">None logged</span>'}</div>
-            ${workedHTML ? `<div class="body-label" style="margin-top:20px;">What Worked</div><ul class="worked-list">${workedHTML}</ul>` : ''}
-            ${didntHTML  ? `<div class="body-label" style="margin-top:20px;">What Didn't Work</div><ul class="didnt-list">${didntHTML}</ul>` : ''}
-          </div>
+		<div class="page-body" id="body-${p.id}">
+		  <div class="body-section">
+			<div class="body-label">Materials Used</div>
+			<div class="material-tags">${matHTML || '<span style="color:var(--muted);font-size:13px;font-style:italic;">None logged</span>'}</div>
+			${workedHTML ? `<div class="body-label" style="margin-top:20px;">What Worked</div><ul class="worked-list">${workedHTML}</ul>` : ''}
+			${didntHTML  ? `<div class="body-label" style="margin-top:20px;">What Didn't Work</div><ul class="didnt-list">${didntHTML}</ul>` : ''}
+		  </div>
 
-          <div class="body-section">
-            ${p.difficulty ? `<div class="body-label">Difficulty</div><div class="body-text">${p.difficulty}</div>` : ''}
-            ${buildPricingHTML(p) ? `<div class="body-label" style="margin-top:${p.difficulty ? '20px' : '0'};">Pricing</div>${buildPricingHTML(p)}` : ''}
-            ${p.verdictNote ? `<div class="body-label" style="margin-top:20px;">Verdict Note</div><div class="verdict-note">${p.verdictNote}</div>` : ''}
-          </div>
+		  <div class="body-section">
+			${p.difficulty ? `<div class="body-label">Difficulty</div><div class="body-text">${p.difficulty}</div>` : ''}
+			${buildPricingHTML(p) ? `<div class="body-label" style="margin-top:${p.difficulty ? '20px' : '0'};">Pricing</div>${buildPricingHTML(p)}` : ''}
+			${p.verdictNote ? `<div class="body-label" style="margin-top:20px;">Verdict Note</div><div class="verdict-note">${p.verdictNote}</div>` : ''}
+		  </div>
 
-          <div class="page-actions">
-            <button class="btn-sm btn-sm-edit"   onclick="openModal('${p.id}')">Edit</button>
-            <button class="btn-sm btn-sm-delete" onclick="deleteProto('${p.id}')">Delete</button>
-          </div>
-        </div>
-      </div>`;
+		  <div class="page-actions">
+			<button class="btn-sm btn-sm-edit"   onclick="openModal('${p.id}')">Edit</button>
+			<button class="btn-sm btn-sm-delete" onclick="deleteProto('${p.id}')">Delete</button>
+		  </div>
+		</div>
+	  </div>`;
   }).join('');
 }
 
@@ -380,23 +398,23 @@ function renderGrid(filtered) {
   if (filtered.length === 0) { wrap.innerHTML = buildEmptyState(); return; }
 
   wrap.innerHTML = filtered.map(p => {
-    const vClass  = 'verdict-' + (p.verdict || 'wip');
-    const vbClass = VERDICT_CLASSES[p.verdict] || 'vb-wip';
-    const vLabel  = VERDICT_LABELS[p.verdict]  || 'In Progress';
-    const pageNum = protos.findIndex(x => x.id === p.id) + 1;
-    const primary = (p.materials || []).find(m => m.primary);
+	const vClass  = 'verdict-' + (p.verdict || 'wip');
+	const vbClass = VERDICT_CLASSES[p.verdict] || 'vb-wip';
+	const vLabel  = VERDICT_LABELS[p.verdict]  || 'In Progress';
+	const pageNum = protos.findIndex(x => x.id === p.id) + 1;
+	const primary = (p.materials || []).find(m => m.primary);
 
-    return `
-      <div class="grid-card ${vClass}" onclick="openModal('${p.id}')">
-        <div class="gc-num">P${pageNum.toString().padStart(3, '0')}</div>
-        <div class="gc-name">${p.name || 'Unnamed'}</div>
-        <div class="gc-cat">${p.category || '—'}${p.iteration ? ' · ' + p.iteration : ''}</div>
-        ${primary ? `<div style="font-family:'Space Mono',monospace;font-size:8px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-top:4px;">${primary.label}</div>` : ''}
-        <div class="gc-meta">
-          <span class="gc-time">${p.time ? p.time + 'h' : '—'}</span>
-          <span class="gc-badge ${vbClass}">${vLabel}</span>
-        </div>
-      </div>`;
+	return `
+	  <div class="grid-card ${vClass}" onclick="openModal('${p.id}')">
+		<div class="gc-num">P${pageNum.toString().padStart(3, '0')}</div>
+		<div class="gc-name">${p.name || 'Unnamed'}</div>
+		<div class="gc-cat">${p.category || '—'}${p.iteration ? ' · ' + p.iteration : ''}</div>
+		${primary ? `<div style="font-family:'Space Mono',monospace;font-size:8px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-top:4px;">${primary.label}</div>` : ''}
+		<div class="gc-meta">
+		  <span class="gc-time">${p.time ? p.time + 'h' : '—'}</span>
+		  <span class="gc-badge ${vbClass}">${vLabel}</span>
+		</div>
+	  </div>`;
   }).join('');
 }
 
@@ -418,9 +436,9 @@ function renderStats() {
 // =============================================================================
 
 function render() {
-  const filtered = (currentFilter === 'all' ? protos : protos.filter(p => p.verdict === currentFilter))
-    .slice()
-    .reverse();
+  const filtered = currentFilter === 'all'
+	? [...protos].reverse()
+	: protos.filter(p => p.verdict === currentFilter).reverse();
 
   renderStats();
   renderJournal(filtered);
