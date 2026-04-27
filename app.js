@@ -1,6 +1,6 @@
 // ── CONFIG ──
-const API_BASE = 'https://niji-proto-app-backend.onrender.com';
-const API = `${API_BASE}/api/prototypes`;
+const API_BASE = 'https://niji-backend.onrender.com';
+const API = `${API_BASE}/api/protojournal/prototypes`;
 
 // ── STATE ──
 let protos       = [];
@@ -61,14 +61,6 @@ async function loadAll() {
 	protos = [];
   }
   render();
-}
-
-// =============================================================================
-// ID GENERATION
-// =============================================================================
-
-function genId() {
-  return 'P' + (protos.length + 1).toString().padStart(3, '0');
 }
 
 // =============================================================================
@@ -217,7 +209,7 @@ document.addEventListener('keydown', function (e) {
 async function saveProto(e) {
   e.preventDefault();
 
-  const id = editingId || genId();
+  const id = editingId || null;
   const proto = {
 	id,
 	name:        document.getElementById('f-name').value,
