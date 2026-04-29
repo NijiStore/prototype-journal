@@ -22,7 +22,9 @@ const VERDICT_CLASSES = { cut: 'vb-cut', maybe: 'vb-maybe', no: 'vb-no', wip: 'v
 // =============================================================================
 
 async function apiGetAll() {
-  const res = await fetch(API);
+  const res = await fetch(API, {
+	credentials: 'include'
+  });
   if (!res.ok) throw new Error('Failed to fetch');
   return res.json();
 }
@@ -32,6 +34,7 @@ async function apiCreate(proto) {
 	method: 'POST',
 	headers: { 'Content-Type': 'application/json' },
 	body: JSON.stringify(proto),
+	credentials: 'include',
   });
   return res.json();
 }
@@ -41,12 +44,16 @@ async function apiUpdate(id, proto) {
 	method: 'PATCH',
 	headers: { 'Content-Type': 'application/json' },
 	body: JSON.stringify(proto),
+	credentials: 'include',
   });
   return res.json();
 }
 
 async function apiDelete(id) {
-  await fetch(`${API}/${id}`, { method: 'DELETE' });
+  await fetch(`${API}/${id}`, { 
+	method: 'DELETE',
+	credentials: 'include',
+});
 }
 
 // =============================================================================
