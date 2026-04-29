@@ -2,6 +2,21 @@
 const API_BASE = 'https://niji-backend.onrender.com';
 const API = `${API_BASE}/api/protojournal/prototypes`;
 
+async function checkAuth() {
+  const res = await fetch(API_BASE + '/auth/me', {
+    credentials: 'include'
+  });
+
+  if (!res.ok) {
+    window.location.href = '/landing/login.html';
+    return null;
+  }
+
+  return await res.json();
+}
+
+await checkAuth();
+
 // ── STATE ──
 let protos       = [];
 let editingId    = null;
