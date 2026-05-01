@@ -8,10 +8,7 @@ window.NIJI_LOGIN_PATH = '/landing/login.html';
 import { auth } from 'https://nijistore.github.io/niji-shared/auth.js';
 
 await auth.requireAuth();
-
-if (!auth.can('app:protojournal')) {
-  auth.hideApp();
-}
+await auth.requirePerm('app:protojournal');
 
 // ── STATE ──
 let protos       = [];
