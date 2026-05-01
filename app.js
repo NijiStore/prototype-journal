@@ -2,20 +2,16 @@
 const API_BASE = 'https://niji-backend.onrender.com';
 const API = `${API_BASE}/api/protojournal/prototypes`;
 
-async function checkAuth() {
-  const res = await fetch(API_BASE + '/auth/me', {
-    credentials: 'include'
-  });
+window.NIJI_AUTH_API_BASE = API_BASE;
+window.NIJI_LOGIN_PATH = '/landing/login.html';
 
-  if (!res.ok) {
-    window.location.href = '/landing/login.html';
-    return null;
-  }
+import { auth } from 'https://nijistore.github.io/niji-shared/auth.js';
 
-  return await res.json();
+await auth.requireAuth();
+
+if (!auth.can('app:protojournal')) {
+  auth.hideApp();
 }
-
-await checkAuth();
 
 // ── STATE ──
 let protos       = [];
