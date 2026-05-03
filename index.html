@@ -14,10 +14,10 @@
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title" id="modal-title">New Prototype</div>
-      <button class="modal-close" onclick="closeModal()">✕ close</button>
+      <button class="modal-close" id="close-btn">✕ close</button>
     </div>
 
-    <form id="proto-form" onsubmit="saveProto(event)">
+    <form id="proto-form">
       <input type="hidden" id="edit-id">
 
       <!-- Identity -->
@@ -61,14 +61,14 @@
           <label>Primary material (the string — from log ID if possible)</label>
           <div class="material-input-group">
             <input type="text" id="mat-primary-input" placeholder="e.g. Steel wound guitar string · N003">
-            <button type="button" onclick="addPrimary()">Set Primary</button>
+            <button type="button" data-action="add-primary">Set Primary</button>
           </div>
         </div>
         <div class="field" style="margin-top:10px;">
           <label>Additional materials</label>
           <div class="material-input-group">
             <input type="text" id="mat-extra-input" placeholder="e.g. Waxed linen thread · brown">
-            <button type="button" onclick="addMaterial()">+ Add</button>
+            <button type="button" data-action="add-material">+ Add</button>
           </div>
         </div>
         <div class="mat-chips" id="mat-chips"></div>
@@ -108,7 +108,7 @@
           <label>Add one thing at a time</label>
           <div class="list-input-group">
             <input type="text" id="worked-input" placeholder="e.g. The coiling technique held tension well">
-            <button type="button" onclick="addWorked()">+ Add</button>
+            <button type="button" data-action="add-worked">+ Add</button>
           </div>
         </div>
         <ul class="dynamic-list" id="worked-list"></ul>
@@ -122,7 +122,7 @@
           <label>Add one thing at a time</label>
           <div class="list-input-group">
             <input type="text" id="didnt-input" placeholder="e.g. Clasp slipped under tension">
-            <button type="button" onclick="addDidnt()">+ Add</button>
+            <button type="button" data-action="add-didnt">+ Add</button>
           </div>
         </div>
         <ul class="dynamic-list" id="didnt-list"></ul>
@@ -157,7 +157,7 @@
 
       <div class="form-actions">
         <button type="submit" class="btn btn-primary">Save Prototype</button>
-        <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        <button type="button" class="btn btn-outline" id="cancel-btn">Cancel</button>
       </div>
     </form>
   </div>
@@ -203,19 +203,19 @@
 
   <!-- Toolbar -->
   <div class="toolbar">
-    <button class="btn btn-primary" onclick="openModal()">+ New Prototype</button>
+    <button class="btn btn-primary" data-action="new">+ New Prototype</button>
     <div class="filter-group">
-      <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
-      <button class="filter-btn" onclick="setFilter('cut', this)">Collection</button>
-      <button class="filter-btn" onclick="setFilter('maybe', this)">Revision</button>
-      <button class="filter-btn" onclick="setFilter('wip', this)">In Progress</button>
-      <button class="filter-btn" onclick="setFilter('no', this)">Retired</button>
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="cut">Collection</button>
+      <button class="filter-btn" data-filter="maybe">Revision</button>
+      <button class="filter-btn" data-filter="wip">In Progress</button>
+      <button class="filter-btn" data-filter="no">Retired</button>
     </div>
     <div class="view-toggle">
-      <button class="view-btn active" onclick="setView('journal', this)">Journal</button>
-      <button class="view-btn" onclick="setView('grid', this)">Grid</button>
+      <button class="view-btn active" data-view="journal">Journal</button>
+      <button class="view-btn" data-view="grid">Grid</button>
     </div>
-    <button class="btn btn-print" onclick="window.print()">⎙ Print</button>
+    <button class="btn btn-print">⎙ Print</button>
   </div>
 
   <!-- Journal view -->
