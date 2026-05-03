@@ -30,6 +30,10 @@ const VERDICT_CLASSES = { cut: 'vb-cut', maybe: 'vb-maybe', no: 'vb-no', wip: 'v
 // =============================================================================
 
 async function apiGetAll() {
+  if (!auth.user.hasPerm('protojournal:read')) {
+    console.log('You dont have permission to do this.');
+    return;
+  }
   const res = await fetch(API, {
 	credentials: 'include'
   });
@@ -83,6 +87,10 @@ async function loadAll() {
 // =============================================================================
 
 function openModal(id = null) {
+  if (!auth.user.hasPerm('protojournal:write')) {
+    console.log('You dont have permission to do this.');
+    return;
+  }
   editingId     = id;
   tempMaterials = [];
   tempWorked    = [];
